@@ -1,11 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/springboot
+    url: jdbc:postgresql://localhost:5432/ssss
     username: postgres
-    password: pass
+    password: 1111
 
   jpa:
-    hibernate: ddl-auto=validate
+    hibernate:
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true

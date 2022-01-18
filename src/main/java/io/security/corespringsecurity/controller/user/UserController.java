@@ -1,4 +1,4 @@
-package io.security.corespringsecurity.controller;
+package io.security.corespringsecurity.controller.user;
 
 
 import io.security.corespringsecurity.domain.Account;
@@ -22,7 +22,12 @@ public class UserController {
 
     @GetMapping("/mypage")
     public String myPage() {
-        return "user/mypage";
+        return "mypage";
+    }
+
+    @GetMapping("/messages")
+    public String messages() {
+        return "messages";
     }
 
     @GetMapping("/users")

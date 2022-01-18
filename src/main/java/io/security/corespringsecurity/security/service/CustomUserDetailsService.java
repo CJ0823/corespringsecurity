@@ -22,6 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+        //jpa를 사용하여 account 테이블에서 계정 정보 조회
         Account account = userRepository.findByUsername(username);
 
         if (account == null) {

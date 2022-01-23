@@ -1,9 +1,9 @@
 package io.security.corespringsecurity.security.configs;
 
 import io.security.corespringsecurity.security.common.FormAuthenticationDetailsSource;
-import io.security.corespringsecurity.security.handler.CustomAccessDeniedHandler;
-import io.security.corespringsecurity.security.handler.CustomAuthenticationFailureHandler;
-import io.security.corespringsecurity.security.handler.CustomAuthenticationSuccessHandler;
+import io.security.corespringsecurity.security.handler.FormAccessDeniedHandler;
+import io.security.corespringsecurity.security.handler.FormAuthenticationFailureHandler;
+import io.security.corespringsecurity.security.handler.FormAuthenticationSuccessHandler;
 import io.security.corespringsecurity.security.provider.FormAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final FormAuthenticationDetailsSource authenticationDetailsSource;
-    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final FormAuthenticationSuccessHandler formAuthenticationSuccessHandler;
+    private final FormAuthenticationFailureHandler formAuthenticationFailureHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -60,8 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/login_proc")
                 .defaultSuccessUrl("/")
                 .authenticationDetailsSource(authenticationDetailsSource)
-                .successHandler(customAuthenticationSuccessHandler)
-                .failureHandler(customAuthenticationFailureHandler)
+                .successHandler(formAuthenticationSuccessHandler)
+                .failureHandler(formAuthenticationFailureHandler)
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler())
@@ -76,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
-        CustomAccessDeniedHandler accessDeniedHandler = new CustomAccessDeniedHandler();
+        FormAccessDeniedHandler accessDeniedHandler = new FormAccessDeniedHandler();
         accessDeniedHandler.setErrorPage("/denied");
         return accessDeniedHandler;
     }

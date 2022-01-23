@@ -25,11 +25,6 @@ public class UserController {
         return "mypage";
     }
 
-    @GetMapping("/messages")
-    public String messages() {
-        return "messages";
-    }
-
     @GetMapping("/users")
     public String createUser(Model model) {
         Roles[] roles = Roles.values();

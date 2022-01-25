@@ -1,10 +1,10 @@
 package io.security.corespringsecurity.controller.user;
 
 
-import io.security.corespringsecurity.domain.Account;
-import io.security.corespringsecurity.domain.AccountDto;
-import io.security.corespringsecurity.domain.Roles;
-import io.security.corespringsecurity.security.service.UserService;
+import io.security.corespringsecurity.domain.entity.Account;
+import io.security.corespringsecurity.domain.dto.AccountDto;
+import io.security.corespringsecurity.domain.dto.Roles;
+import io.security.corespringsecurity.service.UserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;

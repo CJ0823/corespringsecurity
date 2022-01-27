@@ -4,7 +4,7 @@ import io.security.corespringsecurity.domain.dto.AccountDto;
 import io.security.corespringsecurity.domain.entity.Account;
 import io.security.corespringsecurity.domain.entity.Role;
 import io.security.corespringsecurity.repository.RoleRepository;
-import io.security.corespringsecurity.repository.UserRepository;
+import io.security.corespringsecurity.repository.AccountRepository;
 import io.security.corespringsecurity.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         account.setUserRoles(roles);
-        userRepository.save(account);
+        accountRepository.save(account);
     }
 
     @Transactional
@@ -58,14 +58,14 @@ public class UserServiceImpl implements UserService {
             account.setUserRoles(roles);
         }
         account.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-        userRepository.save(account);
+        accountRepository.save(account);
 
     }
 
     @Transactional
     public AccountDto getUser(Long id) {
 
-        Account account = userRepository.findById(id).orElse(new Account());
+        Account account = accountRepository.findById(id).orElse(new Account());
         ModelMapper modelMapper = new ModelMapper();
         AccountDto accountDto = modelMapper.map(account, AccountDto.class);
 
@@ -80,11 +80,11 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public List<Account> getUsers() {
-        return userRepository.findAll();
+        return accountRepository.findAll();
     }
 
     @Override
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        accountRepository.deleteById(id);
     }
 }

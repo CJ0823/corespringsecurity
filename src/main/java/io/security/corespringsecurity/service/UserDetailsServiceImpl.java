@@ -1,0 +1,46 @@
+package io.security.corespringsecurity.service;
+
+import io.security.corespringsecurity.domain.entity.Account;
+import io.security.corespringsecurity.domain.entity.Role;
+import io.security.corespringsecurity.repository.AccountRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service("userDetailsService")
+@RequiredArgsConstructor
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+    private final AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
+
+    private final HttpServletRequest request;
+
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        Account account = accountRepository.findByUsername(username);
+        if (account == null) {
+            if (accountRepository.countByUsername(username) == 0) {
+                throw new UsernameNotFoundException("No user found with username: " + username);
+            }
+        }
+        List<GrantedAuthority> collect = account.get()
+                .stream()
+                .map(Role::getRoleName)
+                .collect(Collectors.toSet())
+                .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
+        //List<GrantedAuthority> collect = userRoles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return new AccountContext(account, collect);
+    }
+}

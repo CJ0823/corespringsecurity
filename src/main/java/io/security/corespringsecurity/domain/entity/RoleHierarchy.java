@@ -19,8 +19,8 @@ public class RoleHierarchy {
     @Column(name = "child_name")
     private String childName;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_name")
-    private RoleHierarchy parentName;
+
+    @Column(name = "parent_name")
+    private String parentName;
 
 }

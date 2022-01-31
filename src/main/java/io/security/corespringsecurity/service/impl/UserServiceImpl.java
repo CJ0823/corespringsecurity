@@ -1,63 +1,70 @@
 package io.security.corespringsecurity.service.impl;
 
 import io.security.corespringsecurity.domain.dto.AccountDto;
+import io.security.corespringsecurity.domain.dto.AccountRoleDto;
 import io.security.corespringsecurity.domain.entity.Account;
+import io.security.corespringsecurity.domain.entity.AccountRole;
 import io.security.corespringsecurity.domain.entity.Role;
-import io.security.corespringsecurity.repository.RoleRepository;
 import io.security.corespringsecurity.repository.AccountRepository;
+import io.security.corespringsecurity.repository.AccountRoleRepository;
+import io.security.corespringsecurity.repository.RoleRepository;
 import io.security.corespringsecurity.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service("userService")
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
+    private final AccountRoleRepository accountRoleRepository;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
     public void createUser(Account account){
 
         Role role = roleRepository.findByRoleName("ROLE_USER");
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        account.setUserRoles(roles);
         accountRepository.save(account);
+
+        AccountRole accountRole = AccountRole.builder()
+                .account(account)
+                .role(role)
+                .build();
+        accountRoleRepository.save(accountRole);
+
     }
 
     @Transactional
     @Override
-    public void modifyUser(AccountDto accountDto){
+    public void modifyUser(AccountRoleDto accountRoleDto){
 
         ModelMapper modelMapper = new ModelMapper();
-        Account account = modelMapper.map(accountDto, Account.class);
+        Account account = modelMapper.map(accountRoleDto, Account.class);
 
-        if(accountDto.getRoles() != null){
-            Set<Role> roles = new HashSet<>();
-            accountDto.getRoles().forEach(role -> {
-                Role r = roleRepository.findByRoleName(role);
-                roles.add(r);
+        //role처리
+        List<Role> roles = accountRoleDto.getRoles();
+        if(!roles.isEmpty()) {
+            roles.forEach(role -> {
+                AccountRole accountRole = AccountRole.builder()
+                        .role(role)
+                        .account(account)
+                        .build();
+                accountRoleRepository.save(accountRole);
             });
-            account.setUserRoles(roles);
         }
-        account.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+
+        account.setPassword(passwordEncoder.encode(accountRoleDto.getPassword()));
         accountRepository.save(account);
 
     }
@@ -65,17 +72,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public AccountDto getUser(Long id) {
 
-        Account account = accountRepository.findById(id).orElse(new Account());
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("id = " + id));
+
         ModelMapper modelMapper = new ModelMapper();
-        AccountDto accountDto = modelMapper.map(account, AccountDto.class);
-
-        List<String> roles = account.getUserRoles()
-                .stream()
-                .map(role -> role.getRoleName())
-                .collect(Collectors.toList());
-
-        accountDto.setRoles(roles);
-        return accountDto;
+        return modelMapper.map(account, AccountDto.class);
     }
 
     @Transactional

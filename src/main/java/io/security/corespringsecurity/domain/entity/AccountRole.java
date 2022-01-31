@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountRoles {
+public class AccountRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

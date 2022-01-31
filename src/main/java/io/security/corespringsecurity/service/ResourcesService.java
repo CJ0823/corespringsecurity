@@ -1,16 +1,17 @@
 package io.security.corespringsecurity.service;
 
-import io.security.corespringsecurity.domain.entity.Resources;
+import io.security.corespringsecurity.domain.dto.RoleResourcesDto;
+import io.security.corespringsecurity.domain.entity.Resource;
 
 import java.util.List;
 
 public interface ResourcesService {
 
-    Resources getResources(long id);
+    Resource getResources(long id);
 
-    List<Resources> getResources();
+    List<Resource> getResources();
 
-    void createResources(Resources Resources);
+    void createRoleAndResources(RoleResourcesDto roleResourcesDto);
 
     void deleteResources(long id);
 }

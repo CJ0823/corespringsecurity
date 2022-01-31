@@ -19,7 +19,7 @@ public class RoleResource {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "resource_id", nullable = false)
-    private Resources resource;
+    private Resource resource;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "role_id", nullable = false)

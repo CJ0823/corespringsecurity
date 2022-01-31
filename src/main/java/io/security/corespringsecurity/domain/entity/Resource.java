@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(value = { AuditingEntityListener.class })
-public class Resources implements Serializable {
+public class Resource implements Serializable {
 
     @Id
     @GeneratedValue

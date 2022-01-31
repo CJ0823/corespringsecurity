@@ -1,8 +1,9 @@
 package io.security.corespringsecurity.service;
 
 import io.security.corespringsecurity.domain.entity.Account;
-import io.security.corespringsecurity.domain.entity.Role;
+import io.security.corespringsecurity.domain.entity.AccountRole;
 import io.security.corespringsecurity.repository.AccountRepository;
+import io.security.corespringsecurity.repository.AccountRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,25 +23,24 @@ import java.util.stream.Collectors;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final AccountRepository accountRepository;
-    private final AccountRepository accountRepository;
+    private final AccountRoleRepository accountRoleRepository;
 
     private final HttpServletRequest request;
 
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Account account = accountRepository.findByUsername(username);
-        if (account == null) {
-            if (accountRepository.countByUsername(username) == 0) {
-                throw new UsernameNotFoundException("No user found with username: " + username);
-            }
-        }
-        List<GrantedAuthority> collect = account.get()
+        Account account = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("No user found with email: " + email));
+
+        Long accountId = account.getId();
+        List<AccountRole> accountRoles = accountRoleRepository.findAllByAccountId(accountId);
+        List<String> roleNames = accountRoles.stream().map(accountRole -> accountRole.getRole().getRoleName()).collect(Collectors.toList());
+
+        List<GrantedAuthority> authorities = roleNames
                 .stream()
-                .map(Role::getRoleName)
-                .collect(Collectors.toSet())
-                .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+                .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
         //List<GrantedAuthority> collect = userRoles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-        return new AccountContext(account, collect);
+        return new AccountContext(account, authorities);
     }
 }

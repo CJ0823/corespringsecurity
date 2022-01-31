@@ -1,13 +1,15 @@
 package io.security.corespringsecurity.controller.admin;
 
+import io.security.corespringsecurity.controller.po.RoleResourcesPo;
 import io.security.corespringsecurity.domain.dto.ResourcesDto;
-import io.security.corespringsecurity.domain.entity.Resources;
+import io.security.corespringsecurity.domain.dto.RoleResourcesDto;
+import io.security.corespringsecurity.domain.entity.Resource;
 import io.security.corespringsecurity.domain.entity.Role;
 import io.security.corespringsecurity.repository.RoleRepository;
 import io.security.corespringsecurity.service.ResourcesService;
 import io.security.corespringsecurity.service.RoleService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,37 +21,29 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
+@RequiredArgsConstructor
 public class ResourcesController {
 
-    @Autowired
-    private ResourcesService resourcesService;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private RoleService roleService;
+    private final ResourcesService resourcesService;
+    private final RoleRepository roleRepository;
+    private final RoleService roleService;
 
     @GetMapping(value="/admin/resources")
     public String getResources(Model model) throws Exception {
 
-        List<Resources> resources = resourcesService.getResources();
+        List<Resource> resources = resourcesService.getResources();
         model.addAttribute("resources", resources);
 
         return "admin/resource/list";
     }
 
     @PostMapping(value="/admin/resources")
-    public String createResources(ResourcesDto resourcesDto) throws Exception {
+    public String createResources(RoleResourcesPo roleResourcesPo) throws Exception {
 
         ModelMapper modelMapper = new ModelMapper();
-        Role role = roleRepository.findByRoleName(resourcesDto.getRoleName());
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        Resources resources = modelMapper.map(resourcesDto, Resources.class);
-        resources.setRoleSet(roles);
+        RoleResourcesDto roleResourcesDto = modelMapper.map(roleResourcesPo, RoleResourcesDto.class);
 
-        resourcesService.createResources(resources);
+        resourcesService.createRoleAndResources(roleResourcesDto);
 
         return "redirect:/admin/resources";
     }
@@ -74,10 +68,10 @@ public class ResourcesController {
 
         List<Role> roleList = roleService.getRoles();
         model.addAttribute("roleList", roleList);
-        Resources resources = resourcesService.getResources(Long.valueOf(id));
+        Resource resource = resourcesService.getResources(Long.valueOf(id));
 
         ModelMapper modelMapper = new ModelMapper();
-        ResourcesDto resourcesDto = modelMapper.map(resources, ResourcesDto.class);
+        ResourcesDto resourcesDto = modelMapper.map(resource, ResourcesDto.class);
         model.addAttribute("resources", resourcesDto);
 
         return "admin/resource/detail";
@@ -86,7 +80,7 @@ public class ResourcesController {
     @GetMapping(value="/admin/resources/delete/{id}")
     public String removeResources(@PathVariable String id, Model model) throws Exception {
 
-        Resources resources = resourcesService.getResources(Long.valueOf(id));
+        Resource resource = resourcesService.getResources(Long.valueOf(id));
         resourcesService.deleteResources(Long.valueOf(id));
 
         return "redirect:/admin/resources";

@@ -1,9 +1,6 @@
 package io.security.corespringsecurity.security.listener;
 
-import io.security.corespringsecurity.domain.entity.Account;
-import io.security.corespringsecurity.domain.entity.AccountRoles;
-import io.security.corespringsecurity.domain.entity.Resources;
-import io.security.corespringsecurity.domain.entity.Role;
+import io.security.corespringsecurity.domain.entity.*;
 import io.security.corespringsecurity.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
@@ -12,11 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Component
@@ -47,7 +41,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
 
     private void setupSecurityResources() {
-        Set<Role> roles = new HashSet<>();
+        List<Role> roles = new ArrayList<>();
         Role adminRole = createRoleIfNotFound("ROLE_ADMIN", "관리자");
         roles.add(adminRole);
         createResourceIfNotFound("/admin/**", "", roles, "url");
@@ -88,37 +82,49 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Transactional
     public Account createUserIfNotFound(String userName, String password, String email, int age, List<Role> roles) {
 
-        Account account = Optional.ofNullable(accountRepository.findByUsername(userName))
-                .orElseGet(() -> Account.builder()
-                        .username(userName)
-                        .email(email)
-                        .age(age)
-                        .password(passwordEncoder.encode(password))
-                        .build());
-        List<AccountRoles> accountRoles = roles.stream().map(role ->
-                AccountRoles.builder()
-                        .role(role)
-                        .account(account)
-                        .build()
-        ).collect(Collectors.toList());
-        accountRoleRepository.saveAll(accountRoles);
+        return accountRepository.findByEmail(email)
+                .orElseGet(() -> {
+                    Account newAccount =  Account.builder()
+                            .username(userName)
+                            .email(email)
+                            .age(age)
+                            .password(passwordEncoder.encode(password))
+                            .build();
+                    accountRepository.save(newAccount);
 
-        return accountRepository.save(account);
+                    List<AccountRole> accountRoles = roles.stream().map(role ->
+                            AccountRole.builder()
+                                    .role(role)
+                                    .account(newAccount)
+                                    .build()
+                    ).collect(Collectors.toList());
+                    accountRoleRepository.saveAll(accountRoles);
+                    return newAccount;
+                });
     }
 
 
     @Transactional
-    public Resources createResourceIfNotFound(String resourceName, String httpMethod, List<Role> roles, String resourceType) {
-        Resources resources = resourcesRepository.findByResourceNameAndHttpMethod(resourceName, httpMethod);
+    public Resource createResourceIfNotFound(String resourceName, String httpMethod, List<Role> roles, String resourceType) {
+        return resourcesRepository.findByResourceNameAndHttpMethod(resourceName, httpMethod)
+                .orElseGet(() ->
+                {
+                    Resource newResource = Resource.builder()
+                            .resourceName(resourceName)
+                            .httpMethod(httpMethod)
+                            .resourceType(resourceType)
+                            .build();
 
-            resources = Resources.builder()
-                    .resourceName(resourceName)
-                    .roleSet(roleSet)
-                    .httpMethod(httpMethod)
-                    .resourceType(resourceType)
-                    .orderNum(count.incrementAndGet())
-                    .build();
+                    resourcesRepository.save(newResource);
 
-        return resourcesRepository.save(resources);
+                    roles.forEach(role -> {
+                        RoleResource newRoleResource = RoleResource.builder()
+                                .resource(newResource)
+                                .role(role)
+                                .build();
+                        roleResourceRepository.save(newRoleResource);
+                    });
+                    return newResource;
+                });
     }
 }

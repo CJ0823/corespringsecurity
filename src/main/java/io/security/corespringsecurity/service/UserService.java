@@ -1,6 +1,7 @@
 package io.security.corespringsecurity.service;
 
 import io.security.corespringsecurity.domain.dto.AccountDto;
+import io.security.corespringsecurity.domain.dto.AccountRoleDto;
 import io.security.corespringsecurity.domain.entity.Account;
 
 import java.util.List;
@@ -9,7 +10,7 @@ public interface UserService {
 
     void createUser(Account account);
 
-    void modifyUser(AccountDto accountDto);
+    void modifyUser(AccountRoleDto accountRoleDto);
 
     List<Account> getUsers();
 

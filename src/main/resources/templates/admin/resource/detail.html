@@ -13,7 +13,7 @@
     <a href="javascript:void(0);" class="cc-tab-item on">리소스관리</a>
   </div>
   <div class="tbl_wrp">
-<form class="form-horizontal" th:action="@{/admin/resources}" method="post" th:object="${resources}">
+<form class="form-horizontal" th:action="@{/admin/resource}" method="post" th:object="${resource}">
   <div class="form-group">
     <label for="resourceName" class="col-sm-2 control-label">리소스명</label>
     <div class="col-sm-10">
@@ -53,8 +53,8 @@
     <div class="col-sm-offset-1 col-sm-10">
       <button type="Submit" class="btn btn-dark btn-lg">등록</button>
       <a th:href="@{/logout}">
-      <a class="btn btn-dark btn-lg" style="margin:10;" th:href="@{/admin/resources}">목록 </a>
-      <a class="btn btn-dark btn-lg" style="margin:10;" th:href="@{'/admin/resources/delete/' + *{id}}">삭제</a>
+      <a class="btn btn-dark btn-lg" style="margin:10;" th:href="@{/admin/resource}">목록 </a>
+      <a class="btn btn-dark btn-lg" style="margin:10;" th:href="@{'/admin/resource/delete/' + *{id}}">삭제</a>
     </div>
   </div>
 </form>

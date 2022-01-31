@@ -1,10 +1,16 @@
 package io.security.corespringsecurity.service.impl;
 
-import io.security.corespringsecurity.domain.entity.Resources;
+import io.security.corespringsecurity.domain.dto.RoleResourcesDto;
+import io.security.corespringsecurity.domain.entity.Resource;
+import io.security.corespringsecurity.domain.entity.Role;
+import io.security.corespringsecurity.domain.entity.RoleResource;
 import io.security.corespringsecurity.repository.ResourcesRepository;
+import io.security.corespringsecurity.repository.RoleRepository;
+import io.security.corespringsecurity.repository.RoleResourceRepository;
 import io.security.corespringsecurity.service.ResourcesService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,24 +19,40 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ResourcesServiceImpl implements ResourcesService {
 
-    @Autowired
-    private ResourcesRepository resourcesRepository;
+    private final ResourcesRepository resourcesRepository;
+    private final RoleRepository roleRepository;
+    private final RoleResourceRepository roleResourceRepository;
 
     @Transactional
-    public Resources getResources(long id) {
-        return resourcesRepository.findById(id).orElse(new Resources());
+    public Resource getResources(long id) {
+        return resourcesRepository.findById(id).orElse(new Resource());
     }
 
     @Transactional
-    public List<Resources> getResources() {
+    public List<Resource> getResources() {
         return resourcesRepository.findAll(Sort.by(Sort.Order.asc("orderNum")));
     }
 
     @Transactional
-    public void createResources(Resources resources){
-        resourcesRepository.save(resources);
+    public void createRoleAndResources(RoleResourcesDto roleResourcesDto){
+
+        List<Role> roles = roleResourcesDto.getRoles();
+        roleRepository.saveAll(roles);
+
+        ModelMapper modelMapper = new ModelMapper();
+        Resource resource = modelMapper.map(roleResourcesDto, Resource.class);
+
+        resourcesRepository.save(resource);
+        roles.forEach(role -> {
+            RoleResource roleResource = RoleResource.builder()
+                    .role(role)
+                    .resource(resource)
+                    .build();
+            roleResourceRepository.save(roleResource);
+        });
     }
 
     @Transactional

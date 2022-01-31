@@ -1,6 +1,7 @@
 package io.security.corespringsecurity.controller.admin;
 
 import io.security.corespringsecurity.domain.dto.AccountDto;
+import io.security.corespringsecurity.domain.dto.AccountRoleDto;
 import io.security.corespringsecurity.domain.entity.Account;
 import io.security.corespringsecurity.domain.entity.Role;
 import io.security.corespringsecurity.service.RoleService;
@@ -33,9 +34,9 @@ public class UserManagerController {
     }
 
     @PostMapping(value="/admin/accounts")
-    public String modifyUser(AccountDto accountDto) throws Exception {
+    public String modifyUser(AccountRoleDto accountRoleDto) throws Exception {
 
-        userService.modifyUser(accountDto);
+        userService.modifyUser(accountRoleDto);
 
         return "redirect:/admin/accounts";
     }

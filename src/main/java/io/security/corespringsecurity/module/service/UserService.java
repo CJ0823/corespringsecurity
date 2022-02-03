@@ -1,18 +1,19 @@
 package io.security.corespringsecurity.module.service;
 
-import io.security.corespringsecurity.module.domain.dto.AccountDto;
-import io.security.corespringsecurity.module.domain.dto.AccountRoleDto;
-import io.security.corespringsecurity.module.domain.entity.Account;
+import io.security.corespringsecurity.module.service.dto.AccountDto;
+import io.security.corespringsecurity.module.service.dto.UserCreateDto;
+import io.security.corespringsecurity.module.service.dto.UserModifyDto;
+import io.security.corespringsecurity.module.service.dto.UserQdDto;
 
 import java.util.List;
 
 public interface UserService {
 
-    void createUser(Account account);
+    void createUser(UserCreateDto userCreateDto);
 
-    void modifyUser(AccountRoleDto accountRoleDto);
+    void modifyUser(UserModifyDto userModifyDto);
 
-    List<AccountRoleDto> getUsers();
+    List<UserQdDto> getUsers();
 
     AccountDto getUser(Long id);
 

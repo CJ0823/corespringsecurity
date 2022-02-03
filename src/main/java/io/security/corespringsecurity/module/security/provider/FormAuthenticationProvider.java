@@ -32,12 +32,13 @@ public class FormAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("BadCredentialsException");
         }
 
-        FormWebAuthenticationDetails formWebAuthenticationDetails = (FormWebAuthenticationDetails) authentication.getDetails();
-        String secretKey = formWebAuthenticationDetails.getSecretKey();
-
-        if(!"secret".equals(secretKey)) {
-            throw new InsufficientAuthenticationException("InsufficientAuthenticationException");
-        }
+        //추가 기능
+//        FormWebAuthenticationDetails formWebAuthenticationDetails = (FormWebAuthenticationDetails) authentication.getDetails();
+//        String secretKey = formWebAuthenticationDetails.getSecretKey();
+//
+//        if(!"secret".equals(secretKey)) {
+//            throw new InsufficientAuthenticationException("InsufficientAuthenticationException");
+//        }
 
         //인증 성공 시 성공한 인증 객체를 생성 후 반환
         return new UsernamePasswordAuthenticationToken(accountContext.getAccount(), null, accountContext.getAuthorities());

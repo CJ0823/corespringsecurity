@@ -1,9 +1,6 @@
 package io.security.corespringsecurity.module.security.listener;
 
-import io.security.corespringsecurity.module.domain.entity.Account;
-import io.security.corespringsecurity.module.domain.entity.AccountRole;
-import io.security.corespringsecurity.module.domain.entity.Resource;
-import io.security.corespringsecurity.module.domain.entity.Role;
+import io.security.corespringsecurity.module.domain.entity.*;
 import io.security.corespringsecurity.module.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
@@ -44,11 +41,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
 
     private void setupSecurityResources() {
-        List<Role> roles = new ArrayList<>();
-        Role adminRole = createRoleIfNotFound("ROLE_ADMIN", "관리자");
-        roles.add(adminRole);
-        createResourceIfNotFound("/admin/**", "", roles, "url");
-        Account account = createUserIfNotFound("admin", "pass", "admin@gmail.com", 10, roles);
+        Role adminRole = createRoleIfNotFound("ROLE_ADMIN");
+        Role userRole = createRoleIfNotFound("ROLE_USER");
+        createResourceIfNotFound("/admin/**", "", adminRole, "url");
+        createUserIfNotFound("admin", "pass", "admin@gmail.com", 10, adminRole);
+        createUserIfNotFound("user", "pass", "user@gmail.com", 11, userRole);
 
 //        Set<Role> roles1 = new HashSet<>();
 //
@@ -69,21 +66,17 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     @Transactional
-    public Role createRoleIfNotFound(String roleName, String roleDesc) {
+    public Role createRoleIfNotFound(String roleName) {
 
-        Role role = roleRepository.findByRoleName(roleName);
-
-        if (role == null) {
-            role = Role.builder()
-                    .roleName(roleName)
-                    .roleDesc(roleDesc)
-                    .build();
-        }
+        Role role = roleRepository.findByRoleName(roleName)
+                .orElse(Role.builder()
+                        .roleName(roleName)
+                        .build());
         return roleRepository.save(role);
     }
 
     @Transactional
-    public Account createUserIfNotFound(String userName, String password, String email, int age, List<Role> roles) {
+    public Account createUserIfNotFound(String userName, String password, String email, int age, Role role) {
 
         return accountRepository.findByEmail(email)
                 .orElseGet(() -> {
@@ -95,20 +88,19 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                             .build();
                     accountRepository.save(newAccount);
 
-                    List<AccountRole> accountRoles = roles.stream().map(role ->
+                    AccountRole accountRole =
                             AccountRole.builder()
                                     .role(role)
                                     .account(newAccount)
-                                    .build()
-                    ).collect(Collectors.toList());
-                    accountRoleRepository.saveAll(accountRoles);
+                                    .build();
+                    accountRoleRepository.save(accountRole);
                     return newAccount;
                 });
     }
 
 
     @Transactional
-    public Resource createResourceIfNotFound(String resourceName, String httpMethod, List<Role> roles, String resourceType) {
+    public Resource createResourceIfNotFound(String resourceName, String httpMethod, Role role, String resourceType) {
         return resourcesRepository.findByResourceNameAndHttpMethod(resourceName, httpMethod)
                 .orElseGet(() ->
                 {
@@ -120,13 +112,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
                     resourcesRepository.save(newResource);
 
-                    roles.forEach(role -> {
-                        io.security.corespringsecurity.module.domain.entity.RoleResource newRoleResource = io.security.corespringsecurity.module.domain.entity.RoleResource.builder()
+                        RoleResource newRoleResource = RoleResource.builder()
                                 .resource(newResource)
                                 .role(role)
                                 .build();
                         roleResourceRepository.save(newRoleResource);
-                    });
                     return newResource;
                 });
     }

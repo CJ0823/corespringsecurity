@@ -1,8 +1,8 @@
 package io.security.corespringsecurity.module.controller.admin;
 
 import io.security.corespringsecurity.module.controller.po.RoleResourcesPo;
-import io.security.corespringsecurity.module.domain.dto.ResourcesDto;
-import io.security.corespringsecurity.module.domain.dto.RoleResourcesDto;
+import io.security.corespringsecurity.module.service.dto.ResourcesDto;
+import io.security.corespringsecurity.module.service.dto.RoleResourcesDto;
 import io.security.corespringsecurity.module.domain.entity.Resource;
 import io.security.corespringsecurity.module.domain.entity.Role;
 import io.security.corespringsecurity.module.service.ResourcesService;

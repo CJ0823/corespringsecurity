@@ -1,6 +1,6 @@
 package io.security.corespringsecurity.module.service.impl;
 
-import io.security.corespringsecurity.module.domain.dto.RoleResourcesDto;
+import io.security.corespringsecurity.module.service.dto.RoleResourcesDto;
 import io.security.corespringsecurity.module.domain.entity.Resource;
 import io.security.corespringsecurity.module.domain.entity.Role;
 import io.security.corespringsecurity.module.domain.entity.RoleResource;

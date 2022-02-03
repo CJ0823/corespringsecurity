@@ -49,9 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-//                .antMatchers("/mypage").hasRole("USER")
-                .antMatchers("/messages").hasAuthority("MANAGER")
-//                .antMatchers("/config").hasRole("ADMIN")
+                .antMatchers("/messages").hasAuthority("ADMIN")
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -59,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .loginProcessingUrl("/login_proc")
                 .defaultSuccessUrl("/")
-                .authenticationDetailsSource(authenticationDetailsSource)
+//                .authenticationDetailsSource(authenticationDetailsSource) //추가 기능
                 .successHandler(formAuthenticationSuccessHandler)
                 .failureHandler(formAuthenticationFailureHandler)
                 .and()

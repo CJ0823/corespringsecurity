@@ -1,4 +1,4 @@
-package io.security.corespringsecurity.module.domain.dto;
+package io.security.corespringsecurity.module.service.dto;
 
 import io.security.corespringsecurity.module.domain.entity.Role;
 import lombok.AllArgsConstructor;
@@ -12,12 +12,12 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountRoleDto {
+public class UserQdDto {
 
-    private String id;
+    private Long id;
     private String username;
     private String email;
-    private int age;
+    private Integer age;
     private String password;
-    private List<Role> roles;
+    private String roleName;
 }

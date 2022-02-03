@@ -1,11 +1,15 @@
 package io.security.corespringsecurity.module.controller.admin;
 
-import io.security.corespringsecurity.module.domain.dto.AccountDto;
-import io.security.corespringsecurity.module.domain.dto.AccountRoleDto;
+import io.security.corespringsecurity.module.controller.po.UserModifyPo;
+import io.security.corespringsecurity.module.controller.po.UserQdPo;
+import io.security.corespringsecurity.module.service.dto.AccountDto;
+import io.security.corespringsecurity.module.service.dto.UserModifyDto;
+import io.security.corespringsecurity.module.service.dto.UserQdDto;
 import io.security.corespringsecurity.module.domain.entity.Role;
 import io.security.corespringsecurity.module.service.RoleService;
 import io.security.corespringsecurity.module.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +28,7 @@ public class UserManagerController {
     @GetMapping(value="/admin/accounts")
     public String getUsers(Model model) throws Exception {
 
-        List<AccountRoleDto> accounts = userService.getUsers();
+        List<UserQdDto> accounts = userService.getUsers();
 
         model.addAttribute("accounts", accounts);
 
@@ -32,9 +36,12 @@ public class UserManagerController {
     }
 
     @PostMapping(value="/admin/accounts")
-    public String modifyUser(AccountRoleDto accountRoleDto) throws Exception {
+    public String modifyUser(UserModifyPo userModifyPo) throws Exception {
 
-        userService.modifyUser(accountRoleDto);
+        ModelMapper mapper = new ModelMapper();
+        UserModifyDto userModifyDto = new UserModifyDto();
+        mapper.map(userModifyPo, userModifyDto);
+        userService.modifyUser(userModifyDto);
 
         return "redirect:/admin/accounts";
     }

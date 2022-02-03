@@ -38,20 +38,20 @@ public class LoginController {
         return "redirect:/login";
     }
 
-    @GetMapping(value={"/denied","/api/denied"})
-    public String accessDenied(@RequestParam(value = "exception", required = false) String exception, Principal principal, Model model) throws Exception {
-
-        Account account = null;
-
-        if (principal instanceof UsernamePasswordAuthenticationToken) {
-            account = (Account) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-
-        }else if(principal instanceof AjaxAuthenticationToken){
-            account = (Account) ((AjaxAuthenticationToken) principal).getPrincipal();
-        }
-        model.addAttribute("username", account.getUsername());
-        model.addAttribute("exception", exception);
-
-        return "user/login/denied";
-    }
+//    @GetMapping(value={"/denied","/api/denied"})
+//    public String accessDenied(@RequestParam(value = "exception", required = false) String exception, Principal principal, Model model) throws Exception {
+//
+//        Account account = null;
+//
+//        if (principal instanceof UsernamePasswordAuthenticationToken) {
+//            account = (Account) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+//
+//        }else if(principal instanceof AjaxAuthenticationToken){
+//            account = (Account) ((AjaxAuthenticationToken) principal).getPrincipal();
+//        }
+//        model.addAttribute("username", account.getUsername());
+//        model.addAttribute("exception", exception);
+//
+//        return "user/login/denied";
+//    }
 }

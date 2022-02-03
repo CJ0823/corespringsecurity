@@ -2,7 +2,7 @@ package io.security.corespringsecurity.module.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import io.security.corespringsecurity.module.domain.dto.AccountRoleDto;
+import io.security.corespringsecurity.module.service.dto.UserQdDto;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -20,10 +20,10 @@ public class AccountRoleRepositoryImpl implements AccountRoleRepositoryCustom {
     }
 
     @Override
-    public List<AccountRoleDto> getUsers() {
+    public List<UserQdDto> getUsers() {
         return jpaQueryFactory
                 .select(Projections.constructor(
-                        AccountRoleDto.class,
+                        UserQdDto.class,
                         account.id,
                         account.username,
                         account.email,

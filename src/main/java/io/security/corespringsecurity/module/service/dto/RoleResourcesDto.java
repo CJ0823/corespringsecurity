@@ -1,4 +1,4 @@
-package io.security.corespringsecurity.module.domain.dto;
+package io.security.corespringsecurity.module.service.dto;
 
 import io.security.corespringsecurity.module.domain.entity.Role;
 import lombok.Data;

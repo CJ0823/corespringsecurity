@@ -1,6 +1,6 @@
 package io.security.corespringsecurity.module.controller.admin;
 
-import io.security.corespringsecurity.module.domain.dto.RoleDto;
+import io.security.corespringsecurity.module.service.dto.RoleDto;
 import io.security.corespringsecurity.module.domain.entity.Role;
 import io.security.corespringsecurity.module.service.RoleService;
 import org.modelmapper.ModelMapper;

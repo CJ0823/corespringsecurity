@@ -43,11 +43,11 @@
             <div class="selected">
                 <label for="age" class="col-sm-2 control-label">권한</label>
                 <div class="col-sm-10">
-                    <select class="select_type01" th:name="role">
+                    <select class="select_type01" th:name="roleName">
                         <option value="선택"> 선택</option>
                         <option th:each="role : ${roles}"
-                                th:value="${role?.name()}"
-                                th:utext="${role?.name()}"></option>
+                                th:value="${role?.roleName}"
+                                th:utext="${role?.roleName}"></option>
                     </select>
                 </div>
             </div>

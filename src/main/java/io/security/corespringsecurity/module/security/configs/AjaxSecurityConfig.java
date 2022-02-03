@@ -16,66 +16,66 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-@Configuration
-@Order(0)
+//@Configuration
+//@Order(0)
 public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(ajaxAuthenticationProvider());
-    }
-
-    @Bean
-    public AuthenticationProvider ajaxAuthenticationProvider() {
-        return new AjaxAuthenticationProvider();
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler ajaxAuthenticationSuccessHandler() {
-        return new AjaxAuthenticationSuccessHandler();
-    }
-
-    @Bean
-    public AuthenticationFailureHandler ajaxAuthenticationFailureHandler() {
-        return new AjaxAuthenticationFailureHandler();
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .antMatcher("/api/**")
-                .authorizeRequests()
-                .antMatchers("/api/messages").hasAuthority("MANAGER")
-                .anyRequest().authenticated()
-//                .and()
-//                .addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class) //기존 필터 앞에 위치할때 사용하는 method
-        ;
-
-        http
-                .exceptionHandling()
-                .authenticationEntryPoint(new AjaxLoginAuthenticationEntryPoint())
-                .accessDeniedHandler(new AjaxAccessDeniedHandler())
-                ;
-
-        http.csrf().disable(); //기본적으로 csrf 토큰값을 들고 요청을 해야되는데, 임시적으로 off 한다.
-
-        customConfigurerAjax(http);
-    }
-
-    private void customConfigurerAjax(HttpSecurity http) throws Exception {
-        http
-                .apply(new AjaxLoginConfigurer<>())
-                .successHandlerAjax(ajaxAuthenticationSuccessHandler())
-                .failureHandlerAjax(ajaxAuthenticationFailureHandler())
-                .setAuthenticationManager(authenticationManagerBean())
-                .loginProcessingUrl("/api/login")
-        ;
-    }
-
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.authenticationProvider(ajaxAuthenticationProvider());
+//    }
+//
+//    @Bean
+//    public AuthenticationProvider ajaxAuthenticationProvider() {
+//        return new AjaxAuthenticationProvider();
+//    }
+//
+//    @Bean
+//    public AuthenticationSuccessHandler ajaxAuthenticationSuccessHandler() {
+//        return new AjaxAuthenticationSuccessHandler();
+//    }
+//
+//    @Bean
+//    public AuthenticationFailureHandler ajaxAuthenticationFailureHandler() {
+//        return new AjaxAuthenticationFailureHandler();
+//    }
+//
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http
+//                .antMatcher("/api/**")
+//                .authorizeRequests()
+//                .antMatchers("/api/messages").hasAuthority("MANAGER")
+//                .anyRequest().authenticated()
+////                .and()
+////                .addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class) //기존 필터 앞에 위치할때 사용하는 method
+//        ;
+//
+//        http
+//                .exceptionHandling()
+//                .authenticationEntryPoint(new AjaxLoginAuthenticationEntryPoint())
+//                .accessDeniedHandler(new AjaxAccessDeniedHandler())
+//                ;
+//
+//        http.csrf().disable(); //기본적으로 csrf 토큰값을 들고 요청을 해야되는데, 임시적으로 off 한다.
+//
+//        customConfigurerAjax(http);
+//    }
+//
+//    private void customConfigurerAjax(HttpSecurity http) throws Exception {
+//        http
+//                .apply(new AjaxLoginConfigurer<>())
+//                .successHandlerAjax(ajaxAuthenticationSuccessHandler())
+//                .failureHandlerAjax(ajaxAuthenticationFailureHandler())
+//                .setAuthenticationManager(authenticationManagerBean())
+//                .loginProcessingUrl("/api/login")
+//        ;
+//    }
+//
+//    @Override
+//    public AuthenticationManager authenticationManagerBean() throws Exception {
+//        return super.authenticationManagerBean();
+//    }
 
 
 //    @Bean

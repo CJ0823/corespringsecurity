@@ -1,4 +1,4 @@
-package io.security.corespringsecurity.module.domain.dto;
+package io.security.corespringsecurity.module.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AccountDto {
 
-    private String id;
+    private Long id;
     private String username;
     private String email;
-    private int age;
+    private Integer age;
     private String password;
 }

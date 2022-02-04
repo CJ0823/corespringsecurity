@@ -33,19 +33,27 @@ public class ResourcesController {
         return "admin/resource/list";
     }
 
-    @PostMapping(value="/admin/resources")
-    public String createResources(RoleResourcesPo roleResourcesPo) throws Exception {
+    @GetMapping("/admin/resource/register")
+    public String viewCreateResource(Model model) throws Exception {
+        List<Role> roles = roleService.getRoles();
+        model.addAttribute("resource", new ResourcesDto());
+        model.addAttribute("roles", roles);
+        return "/admin/resource/register";
+    }
+
+    @PostMapping(value="/admin/resource/register")
+    public String createResource(RoleResourcesPo roleResourcesPo) throws Exception {
 
         ModelMapper modelMapper = new ModelMapper();
         RoleResourcesDto roleResourcesDto = modelMapper.map(roleResourcesPo, RoleResourcesDto.class);
 
         resourcesService.createRoleAndResources(roleResourcesDto);
 
-        return "redirect:/admin/resources";
+        return "redirect:/admin/resource/list";
     }
 
-    @GetMapping(value="/admin/resources/register")
-    public String viewRoles(Model model) throws Exception {
+    @GetMapping(value="/admin/resource")
+    public String getResource(Model model) throws Exception {
 
         List<Role> roleList = roleService.getRoles();
         model.addAttribute("roleList", roleList);

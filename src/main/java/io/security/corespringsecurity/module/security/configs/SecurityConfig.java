@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/messages").hasAuthority("ADMIN")
+                .antMatchers("/messages").hasRole("MANAGER")
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

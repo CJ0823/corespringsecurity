@@ -1,12 +1,9 @@
 package io.security.corespringsecurity.module.service.dto;
 
-import io.security.corespringsecurity.module.domain.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Data
 @Builder
@@ -18,6 +15,5 @@ public class ResourcesDto{
     private String resourceName;
     private String httpMethod;
     private String resourceType;
-    private String roleName;
 
 }

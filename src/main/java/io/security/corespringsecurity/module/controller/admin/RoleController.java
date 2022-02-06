@@ -1,6 +1,7 @@
 package io.security.corespringsecurity.module.controller.admin;
 
 import io.security.corespringsecurity.module.domain.entity.Role;
+import io.security.corespringsecurity.module.service.RoleResourceService;
 import io.security.corespringsecurity.module.service.RoleService;
 import io.security.corespringsecurity.module.service.dto.RoleDto;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 public class RoleController {
 
     private final RoleService roleService;
+    private final RoleResourceService roleResourceService;
 
     @GetMapping(value="/admin/roles")
     public String getRoles(Model model) throws Exception {
@@ -56,12 +58,16 @@ public class RoleController {
         return "admin/role/detail";
     }
 
-    @GetMapping(value="/admin/roles/delete/{id}")
-    public String removeResources(@PathVariable String id, Model model) throws Exception {
+    @PostMapping(value="/admin/roles/delete/{id}")
+    public String removeRoles(@PathVariable String id, Model model) throws Exception {
 
-        Role role = roleService.getRole(Long.parseLong(id));
+        roleResourceService.deleteRoleSourcesByRoleId(Long.parseLong(id));
         roleService.deleteRole(Long.parseLong(id));
+
+        List<Role> roles = roleService.getRoles();
+        model.addAttribute("roles", roles);
 
         return "redirect:/admin/roles";
     }
+
 }

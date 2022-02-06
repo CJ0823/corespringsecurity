@@ -1,9 +1,6 @@
 package io.security.corespringsecurity.module.controller.po;
 
-import io.security.corespringsecurity.module.domain.entity.Role;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class RoleResourcesPo {
@@ -13,6 +10,5 @@ public class RoleResourcesPo {
     private String httpMethod;
     private String resourceType;
     private String roleName;
-    private List<Role> roles;
 
 }

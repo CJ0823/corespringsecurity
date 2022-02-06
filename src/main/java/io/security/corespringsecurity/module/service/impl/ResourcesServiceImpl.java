@@ -1,6 +1,5 @@
 package io.security.corespringsecurity.module.service.impl;
 
-import io.security.corespringsecurity.module.service.dto.RoleResourcesDto;
 import io.security.corespringsecurity.module.domain.entity.Resource;
 import io.security.corespringsecurity.module.domain.entity.Role;
 import io.security.corespringsecurity.module.domain.entity.RoleResource;
@@ -8,6 +7,7 @@ import io.security.corespringsecurity.module.repository.ResourcesRepository;
 import io.security.corespringsecurity.module.repository.RoleRepository;
 import io.security.corespringsecurity.module.repository.RoleResourceRepository;
 import io.security.corespringsecurity.module.service.ResourcesService;
+import io.security.corespringsecurity.module.service.dto.RoleResourcesDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -35,22 +35,25 @@ public class ResourcesServiceImpl implements ResourcesService {
     }
 
     @Transactional
-    public void createRoleAndResources(RoleResourcesDto roleResourcesDto){
+    public void createRoleAndResources(RoleResourcesDto roleResourcesDto) {
 
-        List<Role> roles = roleResourcesDto.getRoles();
-        roleRepository.saveAll(roles);
+        String roleName = roleResourcesDto.getRoleName();
+        Role role = roleRepository.findByRoleName(roleName)
+                .orElseThrow(() -> new NullPointerException("입력된 이름에 해당하는 권한 정보가 없음"));
+        roleRepository.save(role);
 
         ModelMapper modelMapper = new ModelMapper();
         Resource resource = modelMapper.map(roleResourcesDto, Resource.class);
 
         resourcesRepository.save(resource);
-        roles.forEach(role -> {
-            RoleResource roleResource = RoleResource.builder()
-                    .role(role)
-                    .resource(resource)
-                    .build();
-            roleResourceRepository.save(roleResource);
-        });
+
+
+        RoleResource roleResource = RoleResource.builder()
+                .role(role)
+                .resource(resource)
+                .build();
+        roleResourceRepository.save(roleResource);
+
     }
 
     @Transactional

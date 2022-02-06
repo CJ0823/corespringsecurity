@@ -1,9 +1,6 @@
 package io.security.corespringsecurity.module.service.impl;
 
-import io.security.corespringsecurity.module.service.dto.AccountDto;
-import io.security.corespringsecurity.module.service.dto.UserCreateDto;
-import io.security.corespringsecurity.module.service.dto.UserModifyDto;
-import io.security.corespringsecurity.module.service.dto.UserQdDto;
+import io.security.corespringsecurity.module.service.dto.*;
 import io.security.corespringsecurity.module.domain.entity.Account;
 import io.security.corespringsecurity.module.domain.entity.AccountRole;
 import io.security.corespringsecurity.module.domain.entity.Role;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -73,36 +71,44 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void modifyUser(UserModifyDto userModifyDto){
-        Account account = modifyAccount(userModifyDto);
 
-        modifyAccountRole(userModifyDto, account);
+        modifyAccount(userModifyDto);
+
+        modifyAccountRole(userModifyDto);
     }
 
-    private Account modifyAccount(UserModifyDto userModifyDto) {
+    private void modifyAccount(UserModifyDto userModifyDto) {
         String email = userModifyDto.getEmail();
         Account account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("입력한 이메일에 해당하는 계정이 없습니다."));
 
         ModelMapper mapper = new ModelMapper();
         mapper.map(userModifyDto, account);
-
-        account.setPassword(passwordEncoder.encode(userModifyDto.getPassword()));
-        return account;
     }
 
-    private void modifyAccountRole(UserModifyDto userModifyDto, Account account) {
-        Long accountId = account.getId();
+    private void modifyAccountRole(UserModifyDto userModifyDto) {
 
-        AccountRole accountRole = accountRoleRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new NullPointerException("account와 매칭되는 role 정보 없음"));
+        Long accountId = userModifyDto.getId();
+        List<AccountRole> accountRoles = accountRoleRepository.findAllByAccountId(accountId);
+        List<Long> roleIds = accountRoles.stream().map(accountRole -> accountRole.getRole().getId()).collect(Collectors.toList());
 
-        Long roleId = accountRole.getRole().getId();
-        Long newRoleId = userModifyDto.getRoleId();
-        if(!roleId.equals(newRoleId)) {
-            Role newRole = roleRepository.findById(newRoleId)
-                    .orElseThrow(() -> new NullPointerException("입력한 roleId에 해당하는 role 정보 없음"));
-            accountRole.setRole(newRole);
-        }
+        List<AccountRoleDto> newAccountRoles = userModifyDto.getAccountRoles();
+        newAccountRoles.forEach(newAccountRole -> {
+            Long roleId = newAccountRole.getRoleId();
+            Boolean isChecked = newAccountRole.getIsChecked();
+            if(isChecked && !roleIds.contains(roleId)) {
+                Role role = Role.builder().id(roleId).build();
+                Account account = Account.builder().id(accountId).build();
+                AccountRole accountRole = AccountRole.builder()
+                        .role(role)
+                        .account(account)
+                        .build();
+                accountRoleRepository.save(accountRole);
+            }
+            else if(!isChecked) {
+                accountRoleRepository.deleteByAccountIdAndRoleId(accountId, roleId);
+            }
+        });
     }
 
     @Transactional

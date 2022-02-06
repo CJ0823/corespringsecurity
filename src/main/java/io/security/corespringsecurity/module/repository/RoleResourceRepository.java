@@ -16,4 +16,5 @@ public interface RoleResourceRepository extends JpaRepository<RoleResource, Long
     void deleteAllByRoleId(Long roleId);
 
     void deleteAllByResourceId(Long resourceId);
+
 }

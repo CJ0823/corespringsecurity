@@ -13,9 +13,9 @@
   <a href="javascript:tabChange('3');" class="cc-tab-item">리소스관리</a>
 </div>
 <div class="tbl_wrp">
-    <form class="form-horizontal" th:action="@{'/admin/account/modify/' + *{id}}" method="post" th:object="${account}">
+    <form class="form-horizontal" th:action="@{'/admin/account/modify/' + *{id}}" method="post" th:object="${userModifyDto}">
       <div class="form-group">
-        <label for="username" class="col-sm-2 control-label">아이디</label>
+        <label for="username" class="col-sm-2 control-label">이름</label>
         <div class="col-sm-10">
           <input type="text" class="form-control input-large" name="username" id="username" placeholder="username" th:value="*{username}" required>
         </div>
@@ -34,11 +34,11 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="roleName" class="col-sm-2 control-label">권한</label>
-        <div class="col-sm-10">
-          <list class="checkbox" th:each="accountRole: ${accountRoles}">
-            <input type="checkbox" name="roleName" id="roleName"
-                   th:value="${accountRole.roleName}"
+        <label for="accountRoles" class="col-sm-2 control-label">권한</label>
+        <div class="col-sm-10" >
+          <list class="checkbox" >
+            <input type="checkbox" th:each="accountRole: *{accountRoles}" th:name="${accountRole.isChecked}" id="accountRoles"
+                   th:value="${accountRole}"
                    th:text="${accountRole.roleName}"
                    th:checked="${accountRole.isChecked}"
                    />

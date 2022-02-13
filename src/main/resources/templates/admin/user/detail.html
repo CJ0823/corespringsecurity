@@ -35,14 +35,17 @@
       </div>
       <div class="form-group">
         <label for="accountRoles" class="col-sm-2 control-label">권한</label>
-        <div class="col-sm-10" >
-          <list class="checkbox" >
-            <input type="checkbox" th:each="accountRole: *{accountRoles}" th:name="${accountRole.isChecked}" id="accountRoles"
-                   th:value="${accountRole}"
-                   th:text="${accountRole.roleName}"
+        <div class="col-sm-10" id="accountRoles">
+          <div class="form-check" th:each="accountRole: *{accountRoles}" >
+            <input class="form-check-input"
+                    type="checkbox"
+                   th:field="*{accountRoles}"
+                   th:name="${accountRole.roleName}"
+                   th:value="${accountRole.isChecked}"
                    th:checked="${accountRole.isChecked}"
                    />
-          </list>
+            <label th:for="${#ids.prev('accountRoles')}" th:text="${accountRole.roleName}" class="form-check-label" />
+          </div>
         </div>
       </div>
       <div class="form-group">

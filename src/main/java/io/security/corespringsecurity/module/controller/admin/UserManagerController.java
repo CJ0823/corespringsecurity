@@ -41,14 +41,14 @@ public class UserManagerController {
         List<AccountRoleDto> accountRoles = roleService.getRolesWithAccount(id);
 
         UserModifyDto userModifyDto = UserModifyDto.builder()
-                .id(accountDto.getId())
                 .username(accountDto.getUsername())
-                .age(accountDto.getAge())
                 .email(accountDto.getEmail())
+                .age(accountDto.getAge())
                 .accountRoles(accountRoles)
                 .build();
 
         model.addAttribute("userModifyDto", userModifyDto);
+        model.addAttribute("accountRoles", accountRoles);
 
         return "admin/user/detail";
     }

@@ -1,13 +1,16 @@
 package io.security.corespringsecurity.module.security.configs;
 
 import io.security.corespringsecurity.module.security.common.FormAuthenticationDetailsSource;
+import io.security.corespringsecurity.module.security.factory.UrlResourceMapFactoryBean;
 import io.security.corespringsecurity.module.security.handler.FormAccessDeniedHandler;
 import io.security.corespringsecurity.module.security.handler.FormAuthenticationFailureHandler;
 import io.security.corespringsecurity.module.security.handler.FormAuthenticationSuccessHandler;
 import io.security.corespringsecurity.module.security.metadatasource.UrlFilterInvocationMetadataSource;
 import io.security.corespringsecurity.module.security.provider.FormAuthenticationProvider;
+import io.security.corespringsecurity.module.service.impl.SecurityResourceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final FormAuthenticationDetailsSource authenticationDetailsSource;
     private final FormAuthenticationSuccessHandler formAuthenticationSuccessHandler;
     private final FormAuthenticationFailureHandler formAuthenticationFailureHandler;
+    private final SecurityResourceService securityResourceService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -120,7 +124,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private FilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() {
-        return new UrlFilterInvocationMetadataSource();
+        return new UrlFilterInvocationMetadataSource(urlResourcesMapFactoryBean().getObject());
+    }
+
+    private UrlResourceMapFactoryBean urlResourcesMapFactoryBean() {
+        UrlResourceMapFactoryBean urlResourceMapFactoryBean = new UrlResourceMapFactoryBean();
+        urlResourceMapFactoryBean.setSecurityResourceService(securityResourceService);
+        return null;
     }
 
 }

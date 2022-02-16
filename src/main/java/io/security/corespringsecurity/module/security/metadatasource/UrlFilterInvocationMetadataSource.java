@@ -1,10 +1,8 @@
 package io.security.corespringsecurity.module.security.metadatasource;
 
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +18,7 @@ public class UrlFilterInvocationMetadataSource implements FilterInvocationSecuri
 
         HttpServletRequest request = ((FilterInvocation) o).getRequest();
 
-        requestMap.put(new AntPathRequestMatcher("/mypage"), Arrays.asList(new SecurityConfig("ROLE_USER"))); //테스트용. 향후 DB에서 삽입
+//        requestMap.put(new AntPathRequestMatcher("/mypage"), Arrays.asList(new SecurityConfig("ROLE_USER"))); //테스트용. 향후 DB에서 삽입
 
         if(!Objects.isNull(requestMap)) {
             requestMap.entrySet().stream().map(entry -> {

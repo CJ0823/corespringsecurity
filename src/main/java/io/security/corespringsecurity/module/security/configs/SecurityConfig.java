@@ -10,7 +10,6 @@ import io.security.corespringsecurity.module.security.provider.FormAuthenticatio
 import io.security.corespringsecurity.module.service.impl.SecurityResourceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/mypage").hasRole("USER")
 //                .antMatchers("/messages").hasRole("MANAGER")
 //                .antMatchers("/config").hasRole("ADMIN")
-                .antMatchers("/**").permitAll()
+//                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -123,14 +122,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return Arrays.asList(new RoleVoter());
     }
 
-    private FilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() {
+    private FilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() throws Exception {
         return new UrlFilterInvocationMetadataSource(urlResourcesMapFactoryBean().getObject());
     }
 
     private UrlResourceMapFactoryBean urlResourcesMapFactoryBean() {
         UrlResourceMapFactoryBean urlResourceMapFactoryBean = new UrlResourceMapFactoryBean();
         urlResourceMapFactoryBean.setSecurityResourceService(securityResourceService);
-        return null;
+        return urlResourceMapFactoryBean;
     }
 
 }

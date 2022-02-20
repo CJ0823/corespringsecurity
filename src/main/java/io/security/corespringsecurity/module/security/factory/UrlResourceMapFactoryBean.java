@@ -1,13 +1,13 @@
 package io.security.corespringsecurity.module.security.factory;
 
 import io.security.corespringsecurity.module.service.impl.SecurityResourceService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class UrlResourceMapFactoryBean implements FactoryBean<LinkedHashMap<RequestMatcher, List<ConfigAttribute>>> {
 
@@ -20,12 +20,12 @@ public class UrlResourceMapFactoryBean implements FactoryBean<LinkedHashMap<Requ
 
     @Override
     public boolean isSingleton() {
-        return true; //1개만 있어서 true로 처리리
+        return true; //1개만 있어서 true로 처리
    }
 
     @Override
     public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getObject() throws Exception {
-        if(resourceMap.isEmpty()) {
+        if(Objects.isNull(resourceMap)) {
             init();
         }
         return resourceMap;

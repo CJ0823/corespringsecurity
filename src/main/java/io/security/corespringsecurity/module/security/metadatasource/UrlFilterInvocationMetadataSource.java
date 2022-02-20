@@ -13,6 +13,10 @@ public class UrlFilterInvocationMetadataSource implements FilterInvocationSecuri
 
     private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap = new LinkedHashMap<>();
 
+    public UrlFilterInvocationMetadataSource(LinkedHashMap<RequestMatcher, List<ConfigAttribute>> resourcesMap) {
+        this.requestMap = resourcesMap;
+    }
+
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
 
@@ -20,15 +24,19 @@ public class UrlFilterInvocationMetadataSource implements FilterInvocationSecuri
 
 //        requestMap.put(new AntPathRequestMatcher("/mypage"), Arrays.asList(new SecurityConfig("ROLE_USER"))); //테스트용. 향후 DB에서 삽입
 
-        if(!Objects.isNull(requestMap)) {
-            requestMap.entrySet().stream().map(entry -> {
-                RequestMatcher matcher = entry.getKey();
-                if(matcher.matches(request)){
-                    return entry.getValue(); //권한 정보
-                } else {
-                    return null;
-                }
-            }).collect(Collectors.toList());
+        if (!Objects.isNull(requestMap)) {
+            return requestMap.entrySet().stream()
+                    .map(entry -> {
+                        RequestMatcher matcher = entry.getKey();
+                        if (matcher.matches(request)) {
+                            return entry.getValue(); //권한 정보
+                        } else {
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
         }
         return null;
     }
@@ -38,9 +46,9 @@ public class UrlFilterInvocationMetadataSource implements FilterInvocationSecuri
         Set<ConfigAttribute> allAttributes = new HashSet();
         Iterator var2 = this.requestMap.entrySet().iterator();
 
-        while(var2.hasNext()) {
-            Map.Entry<RequestMatcher, Collection<ConfigAttribute>> entry = (Map.Entry)var2.next();
-            allAttributes.addAll((Collection)entry.getValue());
+        while (var2.hasNext()) {
+            Map.Entry<RequestMatcher, Collection<ConfigAttribute>> entry = (Map.Entry) var2.next();
+            allAttributes.addAll((Collection) entry.getValue());
         }
 
         return allAttributes;

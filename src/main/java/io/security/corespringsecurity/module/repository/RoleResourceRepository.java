@@ -19,4 +19,5 @@ public interface RoleResourceRepository extends JpaRepository<RoleResource, Long
 
     List<RoleResource> findAllByResourceId(Long resourceId);
 
+    List<RoleResource> findAllByResourceIdAndRoleId(Long resourceId, Long roleId);
 }

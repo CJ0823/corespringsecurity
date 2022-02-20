@@ -112,8 +112,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.source}</target>
+                    <source>9</source>
+                    <target>9</target>
                     <annotationProcessors>
                         <annotationProcessor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor
                         </annotationProcessor>

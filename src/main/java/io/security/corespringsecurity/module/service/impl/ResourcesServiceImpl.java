@@ -37,23 +37,40 @@ public class ResourcesServiceImpl implements ResourcesService {
     @Transactional
     public void createRoleAndResources(RoleResourcesDto roleResourcesDto) {
 
+        //role 처리
         String roleName = roleResourcesDto.getRoleName();
         Role role = roleRepository.findByRoleName(roleName)
                 .orElseThrow(() -> new NullPointerException("입력된 이름에 해당하는 권한 정보가 없음"));
         roleRepository.save(role);
 
+        //resource 처리
         ModelMapper modelMapper = new ModelMapper();
         Resource resource = modelMapper.map(roleResourcesDto, Resource.class);
 
-        resourcesRepository.save(resource);
+        resourcesRepository.findByResourceNameAndHttpMethod(resource.getResourceName(), resource.getHttpMethod())
+                .ifPresentOrElse(foundResource -> {
+                            //roleResource 처리
+                            createRoleResource(role, foundResource);
+                        },
+                        () -> {
+                            //resource 처리
+                            Resource savedResource = resourcesRepository.save(resource);
+                            //roleResource 처리
+                            createRoleResource(role, savedResource);
+                        });
 
+    }
 
+    private void createRoleResource(Role role, Resource foundResource) {
         RoleResource roleResource = RoleResource.builder()
                 .role(role)
-                .resource(resource)
+                .resource(foundResource)
                 .build();
-        roleResourceRepository.save(roleResource);
 
+        List<RoleResource> foundRoleResources = roleResourceRepository.findAllByResourceIdAndRoleId(foundResource.getId(), role.getId());
+        if (foundRoleResources.isEmpty()) {
+            roleResourceRepository.save(roleResource);
+        }
     }
 
     @Transactional

@@ -2,6 +2,7 @@ package io.security.corespringsecurity.module.security.configs;
 
 import io.security.corespringsecurity.module.security.common.FormAuthenticationDetailsSource;
 import io.security.corespringsecurity.module.security.factory.UrlResourceMapFactoryBean;
+import io.security.corespringsecurity.module.security.filter.PermitAllFilter;
 import io.security.corespringsecurity.module.security.handler.FormAccessDeniedHandler;
 import io.security.corespringsecurity.module.security.handler.FormAuthenticationFailureHandler;
 import io.security.corespringsecurity.module.security.handler.FormAuthenticationSuccessHandler;
@@ -46,6 +47,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final FormAuthenticationSuccessHandler formAuthenticationSuccessHandler;
     private final FormAuthenticationFailureHandler formAuthenticationFailureHandler;
     private final SecurityResourceService securityResourceService;
+
+    //permitAll 필터 사용을 위한 자원 설정
+    private String[] permitAllResources = {"/", "/login", "/user/login/**"};
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -104,13 +108,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public FilterSecurityInterceptor customFilterSecurityInterceptor() throws Exception {
 
-        FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
-        //3가지 속성을 설정해주어야 한다.
-        filterSecurityInterceptor.setSecurityMetadataSource(urlFilterInvocationSecurityMetadataSource());
-        filterSecurityInterceptor.setAccessDecisionManager(affirmativeBased());
-        filterSecurityInterceptor.setAuthenticationManager(authenticationManagerBean());
+//        FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
+//        //3가지 속성을 설정해주어야 한다.
+//        filterSecurityInterceptor.setSecurityMetadataSource(urlFilterInvocationSecurityMetadataSource());
+//        filterSecurityInterceptor.setAccessDecisionManager(affirmativeBased());
+//        filterSecurityInterceptor.setAuthenticationManager(authenticationManagerBean());
+//
+//        return filterSecurityInterceptor;
 
-        return filterSecurityInterceptor;
+        //permitAllFilter 적용
+        PermitAllFilter permitAllFilter = new PermitAllFilter(permitAllResources);
+        permitAllFilter.setSecurityMetadataSource(urlFilterInvocationSecurityMetadataSource());
+        permitAllFilter.setAccessDecisionManager(affirmativeBased());
+        permitAllFilter.setAuthenticationManager(authenticationManagerBean());
+
+        return permitAllFilter;
     }
 
     private AccessDecisionManager affirmativeBased() {

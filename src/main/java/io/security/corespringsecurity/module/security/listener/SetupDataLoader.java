@@ -25,6 +25,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private final RoleResourceRepository roleResourceRepository;
     private final AccountRoleRepository accountRoleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleHierarchyRepository roleHierarchyRepository;
 
     @Override
     @Transactional
@@ -39,13 +40,17 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         alreadySetup = true;
     }
 
-
+    //DB상 초기 데이터를 넣어주기 위한 부분일 뿐, 만약 DB상에 데이터가 있다면 필수적인 코드는 아님
     private void setupSecurityResources() {
         Role adminRole = createRoleIfNotFound("ROLE_ADMIN");
+        Role managerRole = createRoleIfNotFound("ROLE_MANAGER");
         Role userRole = createRoleIfNotFound("ROLE_USER");
         createResourceIfNotFound("/admin/**", "", adminRole, "url");
         createUserIfNotFound("admin", "pass", "admin@gmail.com", 10, adminRole);
-        createUserIfNotFound("user", "pass", "user@gmail.com", 11, userRole);
+        createUserIfNotFound("manager", "pass", "manager@gmail.com", 11, managerRole);
+        createUserIfNotFound("user", "pass", "user@gmail.com", 12, userRole);
+        createRoleHierarchyIfNotFound(userRole, adminRole);
+        createRoleHierarchyIfNotFound(managerRole, adminRole);
 
 //        Set<Role> roles1 = new HashSet<>();
 //
@@ -119,5 +124,23 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
                         roleResourceRepository.save(newRoleResource);
                     return newResource;
                 });
+    }
+
+    @Transactional
+    public void createRoleHierarchyIfNotFound(Role childRole, Role parentRole) {
+        //parent
+        RoleHierarchy roleHierarchy = roleHierarchyRepository.findByChildName(parentRole.getRoleName());
+        if (roleHierarchy == null) {
+            roleHierarchy = RoleHierarchy.builder().childName(parentRole.getRoleName()).build();
+        }
+        RoleHierarchy parentRoleHierarchy = roleHierarchyRepository.save(roleHierarchy);
+
+        //child
+        roleHierarchy = roleHierarchyRepository.findByChildName(childRole.getRoleName());
+        if (roleHierarchy == null) {
+            roleHierarchy = RoleHierarchy.builder().childName(childRole.getRoleName()).build();
+        }
+        RoleHierarchy childRoleHierarchy = roleHierarchyRepository.save(roleHierarchy);
+        childRoleHierarchy.setParentName(parentRoleHierarchy);
     }
 }

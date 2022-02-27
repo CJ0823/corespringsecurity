@@ -1,7 +1,9 @@
 package io.security.corespringsecurity.module.service.impl;
 
+import io.security.corespringsecurity.module.domain.entity.AccessIp;
 import io.security.corespringsecurity.module.domain.entity.Resource;
 import io.security.corespringsecurity.module.domain.entity.RoleResource;
+import io.security.corespringsecurity.module.repository.AccessIpRepository;
 import io.security.corespringsecurity.module.repository.ResourcesRepository;
 import io.security.corespringsecurity.module.repository.RoleResourceRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +15,14 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class SecurityResourceService {
 
     private final ResourcesRepository resourcesRepository;
     private final RoleResourceRepository roleResourceRepository;
+    private final AccessIpRepository accessIpRepository;
 
     public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getResourceList() {
 
@@ -34,5 +38,9 @@ public class SecurityResourceService {
             });
         });
         return result;
+    }
+
+    public List<String> getAccessIpList() {
+        return accessIpRepository.findAll().stream().map(AccessIp::getIpAddress).collect(Collectors.toList());
     }
 }

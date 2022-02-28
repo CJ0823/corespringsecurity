@@ -25,7 +25,8 @@ public class UserController {
 
     @GetMapping("/mypage")
     public String myPage() {
-        return "mypage";
+        userService.order();
+        return "/mypage";
     }
 
     @GetMapping("/users")
@@ -46,4 +47,5 @@ public class UserController {
 
         return "redirect:/";
     }
+
 }

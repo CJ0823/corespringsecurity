@@ -11,6 +11,7 @@ import io.security.corespringsecurity.module.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -130,5 +131,11 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         accountRepository.deleteById(id);
         accountRoleRepository.deleteByAccountId(id);
+    }
+
+    @Override
+    @Secured("ROLE_MANAGER")
+    public void order() {
+        System.out.println("order");
     }
 }

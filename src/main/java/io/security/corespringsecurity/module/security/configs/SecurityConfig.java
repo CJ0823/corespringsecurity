@@ -40,7 +40,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true) //메소드 보안 활성화
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true) //메소드 보안 활성화
 @Slf4j
 @RequiredArgsConstructor
 @Order(1)

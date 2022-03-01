@@ -34,8 +34,25 @@ public class SecurityResourceService {
             List<RoleResource> roleResources = roleResourceRepository.findAllByResourceId(resourceId);
             roleResources.forEach(roleResource -> {
                 configAttributes.add(new SecurityConfig(roleResource.getRole().getRoleName())); //ConfigAttribute 타입의 구현체인 SecurityConfig를 넣어준다.
-                result.put(new AntPathRequestMatcher(resource.getResourceName()), configAttributes);
             });
+            result.put(new AntPathRequestMatcher(resource.getResourceName()), configAttributes);
+        });
+        return result;
+    }
+
+    //메서드 방식
+    public LinkedHashMap<String, List<ConfigAttribute>> getMethodResourceList() {
+
+        LinkedHashMap<String, List<ConfigAttribute>> result = new LinkedHashMap<>();
+        List<Resource> resources = resourcesRepository.findAllByResourceType("method");
+        resources.forEach(resource -> {
+            List<ConfigAttribute> configAttributes = new ArrayList<>();
+            Long resourceId = resource.getId();
+            List<RoleResource> roleResources = roleResourceRepository.findAllByResourceId(resourceId);
+            roleResources.forEach(roleResource -> {
+                configAttributes.add(new SecurityConfig(roleResource.getRole().getRoleName())); //ConfigAttribute 타입의 구현체인 SecurityConfig를 넣어준다.
+            });
+            result.put(resource.getResourceName(), configAttributes);
         });
         return result;
     }

@@ -3,32 +3,31 @@ package io.security.corespringsecurity.module.security.factory;
 import io.security.corespringsecurity.module.service.impl.SecurityResourceService;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class UrlResourceMapFactoryBean implements FactoryBean<LinkedHashMap<RequestMatcher, List<ConfigAttribute>>> {
+public class MethodResourcesFactoryBean implements FactoryBean<LinkedHashMap<String, List<ConfigAttribute>>> {
 
     private SecurityResourceService securityResourceService;
-    private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> resourceMap;
+    private LinkedHashMap<String, List<ConfigAttribute>> resourceMap;
 
-    public void setSecurityResourceService(SecurityResourceService securityResourceService) {
+    public MethodResourcesFactoryBean(SecurityResourceService securityResourceService) {
         this.securityResourceService = securityResourceService;
     }
 
     private void init() {
-        resourceMap = securityResourceService.getResourceList();
+        resourceMap = securityResourceService.getMethodResourceList();
     }
 
     @Override
     public boolean isSingleton() {
         return true; //1개만 있어서 true로 처리
-   }
+    }
 
     @Override
-    public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getObject() throws Exception {
+    public LinkedHashMap<String, List<ConfigAttribute>> getObject() {
         if(Objects.isNull(resourceMap)) {
             init();
         }
